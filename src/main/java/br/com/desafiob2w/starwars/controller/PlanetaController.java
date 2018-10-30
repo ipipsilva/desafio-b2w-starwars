@@ -82,6 +82,7 @@ public class PlanetaController {
 		return planeta;
 	}
 
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping("{id}")
 	void removerPlaneta(@PathVariable String id) {
 
