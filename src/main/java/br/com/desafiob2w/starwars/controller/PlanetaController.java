@@ -2,8 +2,6 @@ package br.com.desafiob2w.starwars.controller;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +19,7 @@ import br.com.desafiob2w.starwars.repository.PlanetaRepository;
 import br.com.desafiob2w.starwars.service.PlanetaServiceRest;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/planetas/")
 public class PlanetaController {
 
 	@Autowired
@@ -31,14 +29,13 @@ public class PlanetaController {
 	private PlanetaServiceRest planetaServiceRest;
 
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping("/planetas")
+	@PostMapping
 	Planeta incluirPlaneta(Planeta planeta) {
 		planeta.setQuantidadeFilmes(planetaServiceRest.obterQuantidadeFilmes(planeta.getNome()));
-		// return planetaRepository.save(planeta);
-		return new Planeta();
+		return planetaRepository.save(planeta);
 	}
 
-	@PutMapping("/planetas/{id}")
+	@PutMapping("{id}")
 	Planeta atualizarPlaneta(Planeta planetaAlterado, @PathVariable String id) {
 
 		Planeta planeta = planetaRepository.findById(id).orElse(null);
@@ -49,19 +46,19 @@ public class PlanetaController {
 			planeta.setNome(planetaAlterado.getNome());
 			planeta.setTerreno(planetaAlterado.getTerreno());
 			planeta.setClima(planetaAlterado.getClima());
-			// TODO quantidade de filmes
+			planeta.setQuantidadeFilmes(planetaServiceRest.obterQuantidadeFilmes(planetaAlterado.getNome()));
 			planetaRepository.save(planeta);
 		}
 
 		return null;
 	}
 
-	@GetMapping("/planetas")
+	@GetMapping
 	List<Planeta> listarTodos() {
 		return planetaRepository.findAll();
 	}
 
-	@GetMapping("/planetas/{id}")
+	@GetMapping("{id}")
 	Planeta obterPlanetaPorId(@PathVariable String id) {
 
 		Planeta planeta = planetaRepository.findById(id).orElse(null);
@@ -73,8 +70,8 @@ public class PlanetaController {
 		return planeta;
 	}
 
-	@GetMapping("/planetas/?nome={nome}")
-	Planeta obterPlanetaPorNome(@PathParam(value = "nome") String nome) {
+	@GetMapping("/nome/{nome}")
+	Planeta obterPlanetaPorNome(@PathVariable String nome) {
 
 		Planeta planeta = planetaRepository.findByNome(nome);
 
@@ -85,7 +82,7 @@ public class PlanetaController {
 		return planeta;
 	}
 
-	@DeleteMapping("/planetas/{id}")
+	@DeleteMapping("{id}")
 	void removerPlaneta(@PathVariable String id) {
 
 		Planeta planeta = planetaRepository.findById(id).orElse(null);
